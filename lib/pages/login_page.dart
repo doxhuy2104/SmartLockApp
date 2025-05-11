@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:smart_lock_app/pages/home_page.dart';
 import 'package:smart_lock_app/services/auth.dart';
 
 class LoginPage extends StatefulWidget {

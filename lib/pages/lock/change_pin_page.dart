@@ -1,18 +1,36 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class ChangePinPage extends StatefulWidget {
-  const ChangePinPage({super.key, required this.title});
+  const ChangePinPage({
+    super.key,
+    required this.title,
+    required this.uid,
+    required this.id,
+  });
 
   final String title;
+  final String uid;
+  final String id;
 
   @override
   State<StatefulWidget> createState() => _ChangePinPageState();
 }
 
 class _ChangePinPageState extends State<ChangePinPage> {
-  final _oldPinController = TextEditingController();
   final _newPinController = TextEditingController();
   final _confirmPinController = TextEditingController();
+  String? error;
+
+  Future<void> _changePIN(String newPIN) async {
+    try {
+      await FirebaseDatabase.instance
+          .ref('${widget.uid}/${widget.id}/PIN')
+          .set(newPIN);
+    } catch (e) {
+      error = 'Failed to change PIN: $e';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +49,6 @@ class _ChangePinPageState extends State<ChangePinPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 TextField(
-                  controller: _oldPinController,
-                  decoration: InputDecoration(labelText: 'Old PIN'),
-                ),
-                const SizedBox(height: 16),
-
-                TextField(
                   controller: _newPinController,
                   decoration: InputDecoration(labelText: 'New PIN'),
                 ),
@@ -53,17 +65,34 @@ class _ChangePinPageState extends State<ChangePinPage> {
                   alignment: Alignment.center,
                   child: ElevatedButton(
                     onPressed: () async {
-                      final oldPIN = _oldPinController.text.trim();
                       final newPIN = _newPinController.text.trim();
                       final confirmPIN = _confirmPinController.text.trim();
 
-                      if (oldPIN.isNotEmpty &&
-                          newPIN.isNotEmpty &&
-                          confirmPIN.isNotEmpty) {
-                      } else {
+                      if (newPIN.isEmpty && confirmPIN.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("Vui lòng nhập đầy đủ")),
                         );
+                      } else if (newPIN.length != 4 ||
+                          int.tryParse(newPIN) == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Vui lòng nhập 4 chữ số"),
+                          ),
+                        );
+                      } else if (newPIN != confirmPIN) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "Vui lòng nhập PIN xác nhận trùng với PIN mới",
+                            ),
+                          ),
+                        );
+                      } else {
+                        _changePIN(newPIN);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Thành công")),
+                        );
+                        Navigator.pop(context);
                       }
                     },
                     child: const Text('Confirm'),

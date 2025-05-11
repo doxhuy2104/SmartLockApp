@@ -47,6 +47,19 @@ class _CardManagePageState extends State<CardManagePage> {
     }
   }
 
+  Future<void> _deleteCard(String cardID) async {
+    try {
+      await FirebaseDatabase.instance
+          .ref('${widget.uid}/${widget.id}/cards/$cardID')
+          .remove();
+      setState(() {
+        cards.removeWhere((card) => card['id'] == cardID);
+      });
+    } catch (e) {
+      error = 'Failed to delete card: $e';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,6 +68,10 @@ class _CardManagePageState extends State<CardManagePage> {
         title: Text(widget.title),
       ),
       body: _listCard(context),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
@@ -62,15 +79,16 @@ class _CardManagePageState extends State<CardManagePage> {
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
+
     return ListView(
       children:
           ListTile.divideTiles(
             context: context,
             tiles: cards.map((card) {
               return ListTile(
-                title: Text(card['name']),
+                title: Text(card['id']),
                 trailing: IconButton(
-                  onPressed: () {},
+                  onPressed: () => _deleteCard(card['id']),
                   icon: const Icon(Icons.delete),
                 ),
               );

@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:smart_lock_app/pages/add_lock_page.dart';
 import 'package:smart_lock_app/pages/lock/lock_page.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -25,14 +26,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _fetchLocks() async {
     try {
-      final snapshot = await FirebaseDatabase.instance.ref(widget.uid).get();
-      if (snapshot.exists) {
-        final data = snapshot.value as Map<dynamic, dynamic>;
-        setState(() {
-          locks = data.entries.map((e) => {'id': e.key, ...e.value}).toList();
-          isLoading = false;
-        });
-      }
+      final ref = FirebaseDatabase.instance.ref(widget.uid);
+      ref.onValue.listen((event) {
+        if (event.snapshot.exists) {
+          final data = event.snapshot.value as Map<dynamic, dynamic>;
+          setState(() {
+            locks = data.entries.map((e) => {'id': e.key, ...e.value}).toList();
+            isLoading = false;
+          });
+        }
+      });
     } catch (e) {
       setState(() {
         error = 'Lỗi khi tải dữ liệu: $e';
@@ -111,6 +114,17 @@ class NavigationDrawer extends StatelessWidget {
 
   // Widget buildHeader(BuildContext context) =>Container(padding: EdgeInsets.only(top: (data: data, child: child).of(context).padding(top)),)
   Widget buildMenuItems(BuildContext context) => Column(
-    children: [ListTile(title: const Text('Change password'), onTap: () {})],
+    children: [
+      ListTile(title: const Text('Change password'), onTap: () {}),
+      ListTile(
+        title: const Text('Add new lock'),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddLockPage()),
+          );
+        },
+      ),
+    ],
   );
 }

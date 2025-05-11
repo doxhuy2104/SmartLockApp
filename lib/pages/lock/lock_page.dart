@@ -121,7 +121,9 @@ class NavigationDrawer extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const ChangePinPage(title: "Change PIN"),
+              builder:
+                  (context) =>
+                      ChangePinPage(title: "Change PIN", uid: uid, id: id),
             ),
           );
         },
