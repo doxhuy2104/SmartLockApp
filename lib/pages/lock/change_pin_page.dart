@@ -68,7 +68,7 @@ class _ChangePinPageState extends State<ChangePinPage> {
                       final newPIN = _newPinController.text.trim();
                       final confirmPIN = _confirmPinController.text.trim();
 
-                      if (newPIN.isEmpty && confirmPIN.isEmpty) {
+                      if (newPIN.isEmpty || confirmPIN.isEmpty) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("Vui lòng nhập đầy đủ")),
                         );

@@ -43,11 +43,11 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       // home: const MyHomePage(title: 'Smart Lock'),
-      // home: const LoginPage(),
-      home: const MyHomePage(
-        title: 'Smart Lock',
-        uid: 'XTYv2rwFJ3ZV6390OIJBlmzZSSk1',
-      ),
+      home: const LoginPage(),
+      // home: const MyHomePage(
+      //   title: 'Smart Lock',
+      //   uid: 'XTYv2rwFJ3ZV6390OIJBlmzZSSk1',
+      // ),
     );
   }
 }
