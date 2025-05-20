@@ -58,19 +58,22 @@ class MyBluetoothService {
         await c.write(chunkList);
         await Future.delayed(Duration(milliseconds: 50));
       }
-      for (int i = 0; i < newLockKey.length; i += chunkSize) {
-        int end =
-            (i + chunkSize < newLockKey.length)
-                ? i + chunkSize
-                : newLockKey.length;
-        String chunk = newLockKey.substring(i, end);
-        List<int> chunkList = utf8.encode('i$chunk');
-        await c.write(chunkList);
-        await Future.delayed(Duration(milliseconds: 50));
-      }
+      // for (int i = 0; i < newLockKey.length; i += chunkSize) {
+      //   int end =
+      //       (i + chunkSize < newLockKey.length)
+      //           ? i + chunkSize
+      //           : newLockKey.length;
+      //   String chunk = newLockKey.substring(i, end);
+      //   List<int> chunkList = utf8.encode('i$chunk');
+      //   await c.write(chunkList);
+      //   await Future.delayed(Duration(milliseconds: 50));
+      // }
+      List<int> idList = utf8.encode(newLockKey);
+      await c.write(idList);
       final lockData = {'name': name, 'PIN': pass, 'state': 1, 'cards': {}};
       await ref.child(newLockKey).set(lockData);
     } catch (e) {
+      developer.log('Error in writeInfo: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString()), duration: Duration(seconds: 3)),
       );
